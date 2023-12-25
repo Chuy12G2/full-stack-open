@@ -1,0 +1,13 @@
+.notification {
+  padding: 10px;
+}
+
+.msg-positive {
+  background-color: lightgreen;
+  border: 5px solid lime;
+}
+
+.msg-negative {
+  background-color: lightcoral;
+  border: 5px solid red;
+}

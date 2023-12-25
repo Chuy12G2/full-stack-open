@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './Filter'
 import PersonForm from './PersonForm'
 import Persons from './Persons'
 import personServices from './services/persons'
+import Notification from './Notification'
 
 
 const App = () => {
@@ -11,6 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [isMessagePositive, setIsMessagePositive] = useState(false)
 
   useEffect(() => {
     personServices
@@ -35,12 +37,19 @@ const App = () => {
           .update(person.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
+            setIsMessagePositive(true)
+            setMessage(`The number of ${returnedPerson.name} was updated successfully`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 2500)
           })
           .catch(error => {
             setPersons(persons.filter(person => person.id !== person.id))
-            setNewName('')
-            setNewPhone('')
-            alert(`${newName} was already deleted from server`)
+            setIsMessagePositive(false)
+            setMessage(`${newName} was not found`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 2500)
           })
       }
       return
@@ -55,6 +64,11 @@ const App = () => {
       .create(newPerson)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+        setIsMessagePositive(true)
+        setMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 2500)
       })
 
       setNewName('')
@@ -76,6 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} isMessagePositive={isMessagePositive}/>
       <Filter filter={filter} setFilter={setFilter} />
       <h2>Add a new</h2>
       <PersonForm newName={newName} newPhone={newPhone} setNewName={setNewName} setNewPhone={setNewPhone} handleSubmit={handleSubmit} />
