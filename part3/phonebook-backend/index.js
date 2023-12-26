@@ -1,4 +1,5 @@
 import express from 'express'
+import morgan from 'morgan'
 
 const app = express()
 
@@ -26,6 +27,10 @@ let persons = [
 ] 
 
 app.use(express.json())
+app.use(morgan('tiny'))
+app.use(morgan(':method :url :body'));
+
+morgan.token('body', request => JSON.stringify(request.body));
 
 app.get('/api/persons', (req, res) => {
   res.json(persons)
